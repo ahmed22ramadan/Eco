@@ -171,13 +171,25 @@ def patch_signing_config(path: pathlib.Path, is_kts: bool) -> None:
         return
 
     if is_kts:
+        # لازم نستورد الكلاسات دي بالاسم في أول الملف (import) بدل ما نكتبها
+        # java.util.Properties() / java.io.FileInputStream() جوه الكود مباشرة.
+        # السبب: بلجن الـ Android/Kotlin بيضيف "java" كـ extension على مستوى
+        # المشروع، فلو كتبنا java.util.Properties() هيفهمها Kotlin إنها
+        # بتحاول توصل لـ .util جوه الـ extension مش جوه الـ package الأصلي
+        # java، وده بيطلع خطأ "Unresolved reference: util/io".
+        required_imports = ["import java.util.Properties", "import java.io.FileInputStream"]
+        missing_imports = [imp for imp in required_imports if imp not in content]
+        if missing_imports:
+            content = "\n".join(missing_imports) + "\n" + content
+            path.write_text(content, encoding="utf-8")
+
         snippet = '''
 
 // --- إعداد التوقيع الرسمي (release signing) — مُضاف تلقائيًا ---
 val keystorePropertiesFile = rootProject.file("key.properties")
-val keystoreProperties = java.util.Properties()
+val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
