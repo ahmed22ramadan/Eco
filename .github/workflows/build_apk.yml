@@ -22,7 +22,7 @@ jobs:
         run: flutter create --org com.robabikya --project-name robabikya --platforms=android .
 
       - name: Prepare signing key from secrets
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
+        if: ${{ env.KEYSTORE_BASE64 != '' }}
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
