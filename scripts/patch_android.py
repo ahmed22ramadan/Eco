@@ -171,13 +171,25 @@ def patch_signing_config(path: pathlib.Path, is_kts: bool) -> None:
         return
 
     if is_kts:
+        # ملحوظة مهمة: لازم نستورد java.util.Properties و java.io.FileInputStream
+        # بالاسم صراحةً (import) بدل ما نكتبهم كامل المسار (java.util.Properties())
+        # جوه الكود. السبب: أي build.gradle.kts لموديول أندرويد فيه property
+        # ضمنية اسمها "java" (من Project.java بتاعة java-base plugin)، فلو
+        # كتبنا "java.util.Properties()" من غير import، Kotlin بيفهم إن
+        # "java" هنا هي الـ property دي مش الـ package، فيطلع
+        # "Unresolved reference 'util'". الاستيراد بيحل المشكلة نهائيًا.
+        imports_needed = ["import java.util.Properties", "import java.io.FileInputStream"]
+        missing_imports = [imp for imp in imports_needed if imp not in content]
+        if missing_imports:
+            content = "\n".join(missing_imports) + "\n\n" + content
+
         snippet = '''
 
 // --- إعداد التوقيع الرسمي (release signing) — مُضاف تلقائيًا ---
 val keystorePropertiesFile = rootProject.file("key.properties")
-val keystoreProperties = java.util.Properties()
+val keystoreProperties = Properties()
 if (keystorePropertiesFile.exists()) {
-    keystoreProperties.load(java.io.FileInputStream(keystorePropertiesFile))
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
