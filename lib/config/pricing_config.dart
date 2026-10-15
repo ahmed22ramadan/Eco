@@ -32,6 +32,10 @@ const Map<String, CategoryPricing> categoryPricing = {
   'tires': CategoryPricing(pricePerUnit: 60),
   // متوسط الخليط (19) والمميز (21)
   'iron_scrap': CategoryPricing(pricePerUnit: 20),
+    // كرتون: سعر تقديري مبدئي بالكيلو، عدّله حسب السوق
+  'cardboard': CategoryPricing(pricePerUnit: 6),
+  // ورق: سعر تقديري مبدئي بالكيلو، عدّله حسب السوق
+  'paper': CategoryPricing(pricePerUnit: 8),
 };
 
 /// بيرجع السعر التقريبي لكمية معيّنة من فئة معيّنة، أو null لو الفئة

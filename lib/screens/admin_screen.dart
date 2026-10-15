@@ -100,7 +100,8 @@ class AdminScreen extends StatelessWidget {
               final matches = scrapCategories.where((c) => c.id == categoryId).toList();
               final category = matches.isNotEmpty ? matches.first : null;
               final categoryName = lang == 'ar' ? (data['categoryNameAr'] ?? '') : (data['categoryNameEn'] ?? '');
-              final regionName = lang == 'ar' ? (data['regionAr'] ?? '') : (data['regionEn'] ?? '');
+              final regionName = data['regionAr'] ?? '';
+              final address = data['address'] as String? ?? '';
               final unit = data['unit'] == 'weight' ? (lang == 'ar' ? 'كيلو' : 'kg') : (lang == 'ar' ? 'عدد' : 'pcs');
               final status = data['status'] as String? ?? 'pending';
               final phone = data['phone'] as String? ?? '';
@@ -158,6 +159,19 @@ class AdminScreen extends StatelessWidget {
                           ),
                         ],
                       ),
+                      if (address.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.home_outlined, size: 16, color: scheme.onSurfaceVariant),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(address, style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant)),
+                            ),
+                          ],
+                        ),
+                      ],
                       if (pickupAt != null) ...[
                         const SizedBox(height: 8),
                         Text(

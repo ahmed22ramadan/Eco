@@ -87,4 +87,20 @@ const List<ScrapCategory> scrapCategories = [
     icon: Icons.build,
     imagePath: 'assets/images/iron_scrap.jpg',
   ),
+    ScrapCategory(
+    id: 'cardboard',
+    nameAr: 'كرتون',
+    nameEn: 'Cardboard',
+    unit: 'weight',
+    icon: Icons.inventory_2,
+    imagePath: 'assets/images/cardboard.jpg',
+  ),
+  ScrapCategory(
+    id: 'paper',
+    nameAr: 'ورق',
+    nameEn: 'Paper',
+    unit: 'weight',
+    icon: Icons.description,
+    imagePath: 'assets/images/paper.jpg',
+  ),
 ];

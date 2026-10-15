@@ -30,6 +30,7 @@ class _RequestFlowScreenState extends State<RequestFlowScreen> {
 
   RegionOption? _selectedRegion;
   final _phoneCtrl = TextEditingController();
+  final _addressCtrl = TextEditingController();
   LatLng _selectedLatLng = const LatLng(30.0444, 31.2357);
   final MapController _mapController = MapController();
 
@@ -67,6 +68,7 @@ class _RequestFlowScreenState extends State<RequestFlowScreen> {
   void dispose() {
     _qtyCtrl.dispose();
     _phoneCtrl.dispose();
+    _addressCtrl.dispose();
     _notesCtrl.dispose();
     super.dispose();
   }
@@ -86,6 +88,10 @@ class _RequestFlowScreenState extends State<RequestFlowScreen> {
     } else if (_step == 1) {
       if (_selectedRegion == null) {
         setState(() => _error = t('err_region'));
+        return;
+      }
+      if (_addressCtrl.text.trim().isEmpty) {
+        setState(() => _error = t('err_address'));
         return;
       }
       if (!_phoneRe.hasMatch(_phoneCtrl.text.trim())) {
@@ -153,7 +159,7 @@ class _RequestFlowScreenState extends State<RequestFlowScreen> {
         'quantity': quantityValue,
         'estimatedPrice': estimatedPrice,
         'regionAr': _selectedRegion!.nameAr,
-        'regionEn': _selectedRegion!.nameEn,
+        'address': _addressCtrl.text.trim(),
         'phone': _phoneCtrl.text.trim(),
         'latitude': _selectedLatLng.latitude,
         'longitude': _selectedLatLng.longitude,
@@ -183,6 +189,7 @@ class _RequestFlowScreenState extends State<RequestFlowScreen> {
       _qtyCtrl.clear();
       _selectedRegion = null;
       _phoneCtrl.clear();
+      _addressCtrl.clear();
       _selectedLatLng = const LatLng(30.0444, 31.2357);
       _selectedDate = null;
       _selectedTime = null;
@@ -348,9 +355,18 @@ class _RequestFlowScreenState extends State<RequestFlowScreen> {
           value: _selectedRegion,
           hint: Text(t('region_placeholder')),
           items: regionOptions
-              .map((r) => DropdownMenuItem(value: r, child: Text(widget.lang == 'ar' ? r.nameAr : r.nameEn)))
+              .map((r) => DropdownMenuItem(value: r, child: Text(r.nameAr)))
               .toList(),
           onChanged: (v) => setState(() => _selectedRegion = v),
+        ),
+        const SizedBox(height: 14),
+        Text(t('address_label'), style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
+        const SizedBox(height: 6),
+        TextField(
+          controller: _addressCtrl,
+          maxLines: 2,
+          keyboardType: TextInputType.streetAddress,
+          decoration: InputDecoration(hintText: t('address_hint')),
         ),
         const SizedBox(height: 14),
         Text(t('phone_label'), style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
